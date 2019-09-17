@@ -125,7 +125,7 @@ func (t *ZhihuClient) GetTopicQuestions(topic *TopicDesc) ([] Question, error) {
 			}
 
 			question := data.Target.Question
-			keywords := []string{"找对象", "找男朋友", "找女朋友","找男友","找女友","程序员","大龄"}
+			keywords := []string{"", ""}
 			for _, keyword := range keywords {
 				if strings.Contains(question.Title, keyword) {
 					Questions = append(Questions, question)
@@ -220,7 +220,7 @@ func (t *ZhihuClient) GetAnswerList(question *QuestionDesc) ([]Answer, error) {
 	for !result.Paging.IsEnd {
 
 		for _, ans := range result.Answers {
-			if strings.Contains(ans.Content, "深圳") && strings.Contains(ans.Content, "女") {
+			if strings.Contains(ans.Content, "深圳") && strings.Contains(ans.Content, "") {
 				thirtyDaysAgo := time.Now().Unix() - 15 * 24 * 3600
 				if ans.UpdatedTime < thirtyDaysAgo {
 					continue

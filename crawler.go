@@ -1,48 +1,54 @@
-package ZhihuZhuanlanCrawler
+package ZhihuCrawler
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 )
 
-func GetPinnedArticlePidAndAuthor(columnName string) (*PinnedArticleAndAuthor, error) {
+func (c *Client) GetPinnedArticlePidAndAuthor(columnName string) (*PinnedArticleAndAuthor, error) {
 	if columnName == "" {
 		return nil, ColumnNameCanNotBeEmpty
 	}
 	u := fmt.Sprintf("https://zhuanlan.zhihu.com/api/columns/%s/pinned-article", columnName)
-	res, err := sendNewZhihuRequest(u)
+	res, err := c.SendNewZhihuRequest(u)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 
 	pinnedArticleAndAuthor := PinnedArticleAndAuthor{}
-	err = res.ToJSON(&pinnedArticleAndAuthor)
+	err = json.Unmarshal(res, &pinnedArticleAndAuthor)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 
 	return &pinnedArticleAndAuthor, nil
 }
 
-func GetSingleArticle(pid int) (*Article, error) {
+func (c *Client) GetSingleArticle(pid int) (*Article, error) {
 	if pid == 0 {
 		return nil, PidCanNotBeEmpty
 	}
 	u := fmt.Sprintf("https://api.zhihu.com/articles/%d", pid)
-	res, err := sendNewZhihuRequest(u)
+	res, err := c.SendNewZhihuRequest(u)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 
 	article := Article{}
-	err = res.ToJSON(&article)
+	err = json.Unmarshal(res, &article)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 
 	return &article, nil
 }
 
-func GetArticlesListPids(columnName string) ([]int, error) {
+func (c *Client) GetArticlesListPids(columnName string) ([]int, error) {
 	if columnName == "" {
 		return nil, ColumnNameCanNotBeEmpty
 	}
@@ -51,14 +57,16 @@ func GetArticlesListPids(columnName string) ([]int, error) {
 	var offset = 0
 
 	u := fmt.Sprintf("https://zhuanlan.zhihu.com/api/columns/%s/articles?limit=%d&offset=%d", columnName, limit, offset)
-	res, err := sendNewZhihuRequest(u)
+	res, err := c.SendNewZhihuRequest(u)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 
 	articleList := ArticleList{}
-	err = res.ToJSON(&articleList)
+	err = json.Unmarshal(res, &articleList)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 
@@ -70,14 +78,16 @@ func GetArticlesListPids(columnName string) ([]int, error) {
 
 	for offset = offset + limit; offset < articleList.Paging.Totals; offset = offset + limit {
 		u := fmt.Sprintf("https://zhuanlan.zhihu.com/api/columns/%s/articles?limit=%d&offset=%d", columnName, limit, offset)
-		res, err := sendNewZhihuRequest(u)
+		res, err := c.SendNewZhihuRequest(u)
 		if err != nil {
+			log.Println(err)
 			return nil, err
 		}
 
 		articleList := ArticleList{}
-		err = res.ToJSON(&articleList)
+		err = json.Unmarshal(res, &articleList)
 		if err != nil {
+			log.Println(err)
 			return nil, err
 		}
 		for _, entry := range articleList.Data {

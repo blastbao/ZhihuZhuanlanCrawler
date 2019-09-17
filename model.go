@@ -1,4 +1,4 @@
-package ZhihuZhuanlanCrawler
+package ZhihuCrawler
 
 type Zhuanlan struct {
 	Slug string `json:"slug"`
@@ -61,4 +61,45 @@ type ArticleList struct {
 	Data []struct {
 		ID int `json:"id"`
 	} `json:"data"`
+}
+
+type QuestionList struct {
+	Paging struct {
+		IsEnd   bool `json:"is_end"`
+		IsStart bool `json:"is_start"`
+		Previous string `json:"previous"`
+		Next string `json:"next"`
+	} `json:"paging"`
+	Data []struct {
+		Target struct {
+			Question Question `json:"question"`
+		} `json:"target"`
+	} `json:"data"`
+}
+
+type Question struct {
+	ID int `json:"id"`
+	Title string `json:"title"`
+	URL string `json:"url"`
+}
+
+type Answer struct {
+	ID int `json:"id"`
+	Author Author `json:"author"`
+	URL string `json:"url"`
+	Question Question `json:"question"`
+	Content string `json:"content"`
+	CreatedTime int64 `json:"created_time"`
+	UpdatedTime int64 `json:"updated_time"`
+}
+
+type AnswerList struct {
+	Paging struct {
+		IsEnd   bool `json:"is_end"`
+		IsStart bool `json:"is_start"`
+		Previous string `json:"previous"`
+		Next string `json:"next"`
+		Totals int `json:"totals"`
+	} `json:"paging"`
+	Answers [] Answer `json:"data"`
 }

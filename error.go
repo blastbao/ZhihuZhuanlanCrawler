@@ -1,4 +1,4 @@
-package ZhihuZhuanlanCrawler
+package ZhihuCrawler
 
 import "errors"
 
